@@ -1,5 +1,5 @@
-RAG CHATBOT PROJECT 
-====================
+Retrieval-Augmented Generation (RAG) CHATBOT 
+==========================================
 
 Project name:
 rag-chatbot
