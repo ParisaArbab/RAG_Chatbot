@@ -1,5 +1,5 @@
-RAG CHATBOT PROJECT EXPLANATION
-================================
+RAG CHATBOT PROJECT 
+====================
 
 Project name:
 rag-chatbot
@@ -323,8 +323,8 @@ TOP_K
 Number of document chunks retrieved for each question.
 
 
-EXPLANATION
-============================
+project overview
+=================
 
 I built a RAG chatbot API using FastAPI, LangChain, and a vector database.
 The user can upload documents. The system splits the documents into chunks,
@@ -334,8 +334,8 @@ LLM as context. This helps the model answer based on the uploaded documents and
 reduces hallucination.
 
 
-COMMON PROBLEMS AND FIXES
-=========================
+project challenges 
+====================
 
 Problem: OPENAI_API_KEY error
 Fix: Make sure you created a .env file and added your real OpenAI API key.
