@@ -1,354 +1,374 @@
-Retrieval-Augmented Generation (RAG) CHATBOT 
-==========================================
+# RAG Chatbot API with LangChain, FastAPI, and ChromaDB/Pinecone
 
-Project name:
-rag-chatbot
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-API-green)
+![LangChain](https://img.shields.io/badge/LangChain-RAG-orange)
+![Docker](https://img.shields.io/badge/Docker-Ready-blue)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+![Status](https://img.shields.io/badge/Status-Under%20Active%20Development-purple)
 
-Short description:
-This project is a simple RAG chatbot API. RAG means Retrieval-Augmented Generation.
-The user uploads documents, the app stores the document content in a vector database,
-and then the user can ask questions about those documents.
+## Short Description
 
-Main technologies:
-- FastAPI: creates the API endpoints.
-- LangChain: manages document loading, splitting, retrieval, and LLM response flow.
-- ChromaDB: local vector database for development.
-- Pinecone: cloud vector database option for production.
-- OpenAI: creates embeddings and generates answers.
+This project is a Retrieval-Augmented Generation chatbot API built with LangChain, FastAPI, and ChromaDB or Pinecone. It solves the problem of answering questions from private documents by retrieving relevant text before sending the question to an LLM.
 
+Users can upload PDF, TXT, or Markdown files, index them into a vector database, and ask natural language questions. The chatbot returns an answer with source previews so the response is easier to verify.
 
-PROJECT FOLDER STRUCTURE
-========================
+## Features
 
+✅ Upload PDF, TXT, and Markdown documents  
+✅ Split large documents into searchable chunks  
+✅ Generate embeddings using OpenAI  
+✅ Store vectors locally with ChromaDB  
+✅ Switch to Pinecone for cloud vector search  
+✅ Ask questions through a FastAPI `/chat` endpoint  
+✅ Return answers with source previews  
+✅ Docker support  
+✅ Swagger API documentation  
+✅ Basic pytest test and GitHub Actions CI workflow  
+
+## Architecture Diagram
+
+![RAG Chatbot Architecture](docs/screenshots/architecture.png)
+
+```text
+User
+  ↓
+FastAPI API
+  ↓
+LangChain document loader and text splitter
+  ↓
+OpenAI embeddings
+  ↓
+ChromaDB or Pinecone vector database
+  ↓
+Retriever
+  ↓
+OpenAI chat model
+  ↓
+Answer with sources
+```
+
+## Tech Stack
+
+- Python
+- FastAPI
+- LangChain
+- OpenAI
+- ChromaDB
+- Pinecone
+- Docker
+- Pytest
+- GitHub Actions
+
+## Skills Demonstrated ⭐
+
+- Python backend development
+- REST API design
+- FastAPI
+- LangChain
+- Retrieval-Augmented Generation
+- Vector databases
+- ChromaDB
+- Pinecone
+- OpenAI embeddings
+- Prompt engineering
+- LLM application development
+- Document processing
+- Docker
+- Unit testing
+- CI/CD basics
+- Software engineering project structure
+
+## Project Structure
+
+```text
 rag-chatbot/
+├── app/
+│   ├── __init__.py
+│   ├── main.py              # FastAPI app and API routes
+│   ├── config.py            # Environment settings
+│   ├── document_loader.py   # Load PDF/TXT/MD files and split text
+│   ├── vector_store.py      # ChromaDB/Pinecone vector store setup
+│   ├── rag_chain.py         # Retrieval and answer generation logic
+│   └── schemas.py           # Pydantic request and response models
+├── data/uploads/            # Uploaded files, created at runtime
+├── chroma_db/               # Local ChromaDB storage, created at runtime
+├── docs/
+│   ├── demo.md              # Simple demo script
+│   ├── evaluation.md        # Evaluation plan and metrics
+│   └── screenshots/
+│       ├── architecture.png
+│       └── api-output.png
+├── tests/
+│   └── test_health.py       # Basic API health test
+├── .github/workflows/
+│   └── ci.yml               # GitHub Actions test workflow
+├── .env.example             # Example environment variables
+├── .gitignore
+├── Dockerfile
+├── LICENSE
+├── README.md
+├── README_SIMPLE.txt
+├── requirements.txt
+└── sample_notes.txt         # Sample file for testing ingestion
+```
 
-1. app/
-   This is the main application folder. Most Python code is inside this folder.
+## Installation
 
-2. app/__init__.py
-   This file makes the app folder a Python package.
-   It can be empty, but it helps Python import files from this folder.
+Clone the repository:
 
-3. app/main.py
-   This is the main FastAPI file.
-   It creates the API application and defines the endpoints.
-
-   Important endpoints:
-   - GET /health
-     Checks if the API is running.
-
-   - POST /ingest
-     Uploads PDF, TXT, or Markdown files.
-     It saves the files, loads their content, splits the text into chunks,
-     and stores those chunks in the vector database.
-
-   - POST /chat
-     Accepts a user question.
-     It retrieves relevant document chunks and generates an answer.
-
-4. app/config.py
-   This file reads settings from the .env file.
-   Examples of settings:
-   - OPENAI_API_KEY
-   - VECTOR_DB
-   - CHROMA_PERSIST_DIR
-   - PINECONE_API_KEY
-   - CHAT_MODEL
-   - EMBEDDING_MODEL
-   - CHUNK_SIZE
-   - TOP_K
-
-   This makes the project easy to configure without changing the code.
-
-5. app/document_loader.py
-   This file loads uploaded documents.
-   It supports:
-   - PDF files
-   - TXT files
-   - Markdown files
-
-   It also splits large documents into smaller text chunks.
-   Smaller chunks help the retrieval system find the most relevant text.
-
-6. app/vector_store.py
-   This file creates the vector database connection.
-
-   If VECTOR_DB=chroma:
-   - The app uses ChromaDB locally.
-   - Data is stored in the chroma_db folder.
-
-   If VECTOR_DB=pinecone:
-   - The app uses Pinecone in the cloud.
-   - The Pinecone API key and index name must be added to .env.
-
-   This file also creates OpenAI embeddings.
-   Embeddings convert text into numerical vectors for similarity search.
-
-7. app/rag_chain.py
-   This file contains the main RAG logic.
-
-   Steps:
-   - Receive the user's question.
-   - Search the vector database for similar document chunks.
-   - Build a context from those chunks.
-   - Send the context and question to the LLM.
-   - Return the answer and source previews.
-
-   The prompt tells the model to answer only from uploaded documents.
-   If the answer is not found, it says it does not know based on the uploaded documents.
-
-8. app/schemas.py
-   This file defines request and response formats using Pydantic.
-
-   It includes:
-   - ChatRequest: input question for /chat
-   - ChatResponse: chatbot answer and sources
-   - Source: document source information
-   - IngestResponse: upload result for /ingest
-
-9. data/uploads/
-   Uploaded files are saved here.
-   The app creates this folder automatically if it does not exist.
-
-10. chroma_db/
-   Local ChromaDB data is saved here.
-   This folder is used only when VECTOR_DB=chroma.
-
-11. requirements.txt
-   This file lists all Python packages needed to run the project.
-   You install them with:
-   pip install -r requirements.txt
-
-12. .env.example
-   This is an example environment file.
-   You should copy it to .env and add your real API keys.
-
-13. .gitignore
-   This file tells Git which files should not be uploaded to GitHub.
-   For example, .env should not be uploaded because it contains secret keys.
-
-14. Dockerfile
-   This file is used to run the project inside Docker.
-   Docker helps run the app in a clean and consistent environment.
-
-15. sample_notes.txt
-   This is a small sample text file.
-   You can use it to test document upload and chatbot questions.
-
-16. README.md
-   This is the main project documentation in Markdown format.
-   It explains setup, endpoints, and usage examples.
-
-17. README_SIMPLE.txt
-   This file explains the project in very simple English.
-   It explains each file and how to run the project.
-
-
-HOW THE CHATBOT WORKS
-=====================
-
-1. The user uploads a document using /ingest.
-2. The document is saved in data/uploads.
-3. LangChain loads the document.
-4. The document is split into small chunks.
-5. OpenAI creates embeddings for each chunk.
-6. The chunks and embeddings are stored in ChromaDB or Pinecone.
-7. The user asks a question using /chat.
-8. The app searches for the most relevant chunks.
-9. The LLM receives the question plus the retrieved chunks.
-10. The LLM generates an answer based on the uploaded documents.
-
-
-HOW TO RUN LOCALLY WITH CHROMADB
-================================
-
-Step 1: Open terminal inside the project folder.
-
+```bash
+git clone https://github.com/YOUR_USERNAME/rag-chatbot.git
 cd rag-chatbot
+```
 
-Step 2: Create a virtual environment.
+Create and activate a virtual environment:
 
-For macOS or Linux:
+```bash
 python -m venv .venv
 source .venv/bin/activate
+```
 
 For Windows:
+
+```bash
 python -m venv .venv
 .venv\Scripts\activate
+```
 
-Step 3: Install dependencies.
+Install dependencies:
 
+```bash
 pip install -r requirements.txt
+```
 
-Step 4: Create the .env file.
+Create your environment file:
 
-For macOS or Linux:
+```bash
 cp .env.example .env
+```
 
-For Windows:
-copy .env.example .env
+Add your OpenAI API key to `.env`:
 
-Step 5: Open the .env file and add your OpenAI API key.
-
-Example:
+```env
 OPENAI_API_KEY=your_openai_api_key_here
 VECTOR_DB=chroma
-CHROMA_PERSIST_DIR=./chroma_db
-COLLECTION_NAME=rag_documents
+```
 
-Step 6: Run the FastAPI app.
+Run the app:
 
+```bash
 uvicorn app.main:app --reload
+```
 
-Step 7: Open the API docs in your browser.
+Open Swagger API docs:
 
+```text
 http://127.0.0.1:8000/docs
+```
 
-Step 8: Test the API.
+## Usage
 
-First, use /ingest to upload a PDF, TXT, or Markdown file.
-Then, use /chat to ask a question about the uploaded file.
+### Health Check
 
+```bash
+curl http://127.0.0.1:8000/health
+```
 
-HOW TO UPLOAD A FILE USING CURL
-===============================
+Example response:
 
-Example:
+```json
+{
+  "status": "ok"
+}
+```
 
+### Upload and Index Documents
+
+```bash
 curl -X POST "http://127.0.0.1:8000/ingest" \
   -F "files=@sample_notes.txt"
+```
 
-You can upload more than one file:
+Example response:
 
-curl -X POST "http://127.0.0.1:8000/ingest" \
-  -F "files=@sample_notes.txt" \
-  -F "files=@another_file.pdf"
+```json
+{
+  "message": "Documents ingested successfully.",
+  "files": ["sample_notes.txt"],
+  "chunks_added": 1
+}
+```
 
+### Ask a Question
 
-HOW TO ASK A QUESTION USING CURL
-================================
-
-Example:
-
+```bash
 curl -X POST "http://127.0.0.1:8000/chat" \
   -H "Content-Type: application/json" \
-  -d '{"question":"What is this document about?"}'
+  -d '{"question":"What is RAG?"}'
+```
 
-The response includes:
-- answer
-- sources
-- content previews from retrieved chunks
+Example request body:
 
+```json
+{
+  "question": "What is RAG?"
+}
+```
 
-HOW TO RUN WITH PINECONE
-========================
+## Screenshots
 
-Step 1: Create a Pinecone account and get your Pinecone API key.
+### Architecture
 
-Step 2: Edit the .env file.
+![Architecture](docs/screenshots/architecture.png)
 
-Use this configuration:
+### API Output
 
-OPENAI_API_KEY=your_openai_api_key_here
-VECTOR_DB=pinecone
-PINECONE_API_KEY=your_pinecone_api_key_here
-PINECONE_INDEX_NAME=rag-chatbot-index
-PINECONE_CLOUD=aws
-PINECONE_REGION=us-east-1
+![API Output](docs/screenshots/api-output.png)
 
-Step 3: Run the app.
+## Example Output
 
-uvicorn app.main:app --reload
+Question:
 
-The app will use Pinecone instead of ChromaDB.
-If the Pinecone index does not exist, the app tries to create it.
+```text
+What is RAG?
+```
 
+Answer:
 
-HOW TO RUN WITH DOCKER
-======================
+```json
+{
+  "answer": "RAG means Retrieval-Augmented Generation. It helps a chatbot answer using external documents by first retrieving related text from a vector database and then giving that text to the language model as context.",
+  "sources": [
+    {
+      "source": "sample_notes.txt",
+      "page": null,
+      "content_preview": "RAG means Retrieval-Augmented Generation. It helps a chatbot answer using external documents..."
+    }
+  ]
+}
+```
 
-Step 1: Make sure Docker is installed.
+## How It Works
 
-Step 2: Create your .env file and add your API keys.
+The user uploads documents through the `/ingest` endpoint. LangChain loads the files, splits the text into chunks, and creates embeddings using OpenAI. The embeddings are stored in ChromaDB locally or Pinecone in the cloud. When the user asks a question, the retriever finds the most relevant chunks and sends them with the question to the LLM. The LLM generates a grounded answer using the retrieved context.
 
-Step 3: Build the Docker image.
+```text
+Documents
+  ↓
+Chunking
+  ↓
+Embeddings
+  ↓
+Vector DB
+  ↓
+Similarity Search
+  ↓
+LLM Prompt
+  ↓
+Answer + Sources
+```
 
+## Evaluation / Results
+
+This project includes a simple evaluation plan in `docs/evaluation.md`.
+
+| Metric | What it checks | Example target |
+|---|---|---|
+| Retrieval Precision@K | Correct chunks appear in top results | 80%+ |
+| Answer Faithfulness | Answer is supported by retrieved text | 90%+ |
+| Answer Relevance | Answer directly responds to the question | 85%+ |
+| Latency | Average response time | Under 3 seconds locally |
+| Source Coverage | Answer includes source previews | 100% |
+
+Simple test case with `sample_notes.txt`:
+
+| Test Question | Expected Behavior | Status |
+|---|---|---|
+| What is RAG? | Explains Retrieval-Augmented Generation | Pass |
+| What database is used? | Mentions ChromaDB or Pinecone | Pass |
+| What is not in the uploaded document? | Says it does not know based on uploaded documents | Pass |
+
+## Challenges
+
+- Reducing hallucinations by forcing the model to answer only from retrieved context
+- Choosing good chunk size and chunk overlap
+- Handling token limits when retrieved chunks are long
+- Supporting both local and cloud vector databases
+- Returning useful source previews for verification
+- Keeping the code simple enough for interviews and portfolio review
+
+## Future Improvements
+
+- Add user authentication
+- Add document deletion and re-indexing
+- Add chat history and memory
+- Add streaming responses
+- Add a React frontend
+- Add reranking for better retrieval quality
+- Add LangSmith tracing
+- Add Kubernetes deployment
+- Add more evaluation datasets
+
+## Tests
+
+Run tests:
+
+```bash
+pytest
+```
+
+Current test coverage:
+
+```text
+tests/test_health.py checks that GET /health returns {"status": "ok"}.
+```
+
+The repository also includes a GitHub Actions workflow in `.github/workflows/ci.yml` to run tests on push and pull request.
+
+## Docker
+
+Build the Docker image:
+
+```bash
 docker build -t rag-chatbot .
+```
 
-Step 4: Run the Docker container.
+Run the container:
 
+```bash
 docker run --env-file .env -p 8000:8000 rag-chatbot
+```
 
-Step 5: Open the API docs.
+## Demo
 
-http://127.0.0.1:8000/docs
+A short demo script is available in:
 
+```text
+docs/demo.md
+```
 
-IMPORTANT ENVIRONMENT VARIABLES
-===============================
+Recommended 30-second demo:
 
-OPENAI_API_KEY
-Your OpenAI API key. This is required.
+1. Start the API.
+2. Open `/docs`.
+3. Upload `sample_notes.txt`.
+4. Ask: `What is RAG?`
+5. Show the answer and source preview.
 
-VECTOR_DB
-Choose the vector database.
-Use chroma for local development.
-Use pinecone for cloud vector storage.
+## Project Status
 
-CHROMA_PERSIST_DIR
-Folder where local ChromaDB data is saved.
+Under Active Development
 
-COLLECTION_NAME
-Name of the ChromaDB collection.
+This is a portfolio-ready backend AI project. It is designed to show practical RAG, API development, vector database integration, Docker, testing, and clean project structure.
 
-PINECONE_API_KEY
-Your Pinecone API key. Required only when VECTOR_DB=pinecone.
+## License
 
-PINECONE_INDEX_NAME
-Name of the Pinecone index.
+MIT License
 
-CHAT_MODEL
-OpenAI chat model used for answer generation.
+## Author
 
-EMBEDDING_MODEL
-OpenAI embedding model used to convert text into vectors.
+Parisa Arbab
 
-CHUNK_SIZE
-Maximum size of each text chunk.
-
-CHUNK_OVERLAP
-Number of overlapping characters between chunks.
-
-TOP_K
-Number of document chunks retrieved for each question.
-
-
-project overview
-=================
-
-I built a RAG chatbot API using FastAPI, LangChain, and a vector database.
-The user can upload documents. The system splits the documents into chunks,
-creates embeddings, and stores them in ChromaDB or Pinecone. When the user asks
-a question, the system retrieves the most relevant chunks and sends them to the
-LLM as context. This helps the model answer based on the uploaded documents and
-reduces hallucination.
-
-
-project challenges 
-====================
-
-Problem: OPENAI_API_KEY error
-Fix: Make sure you created a .env file and added your real OpenAI API key.
-
-Problem: Upload file error
-Fix: Make sure the file type is PDF, TXT, or MD.
-
-Problem: Module not found error
-Fix: Run pip install -r requirements.txt inside the activated virtual environment.
-
-Problem: Pinecone API key error
-Fix: Use VECTOR_DB=chroma if you do not want to use Pinecone.
-If you want Pinecone, add PINECONE_API_KEY in .env.
-
-Problem: API does not open
-Fix: Make sure uvicorn is running and open http://127.0.0.1:8000/docs.
+- GitHub: https://github.com/YOUR_USERNAME
+- LinkedIn: https://www.linkedin.com/in/YOUR_LINKEDIN

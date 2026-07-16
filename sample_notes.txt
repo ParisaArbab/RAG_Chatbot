@@ -1,0 +1,1 @@
+RAG means Retrieval-Augmented Generation. It helps a chatbot answer using external documents. The system first retrieves related text from a vector database, then gives that text to the language model as context.
