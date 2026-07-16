@@ -363,8 +363,8 @@ Under Active Development
 This is a portfolio-ready backend AI project. It is designed to show practical RAG, API development, vector database integration, Docker, testing, and clean project structure.
 
 ## License
-
-MIT License
+This project is for educational and portfolio purposes.
+All rights reserved by the author.
 
 ## Author
 
