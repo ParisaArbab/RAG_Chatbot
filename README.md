@@ -370,5 +370,5 @@ All rights reserved by the author.
 
 Parisa Arbab
 
-- GitHub: https://github.com/YOUR_USERNAME
-- LinkedIn: https://www.linkedin.com/in/YOUR_LINKEDIN
+- GitHub: https://github.com/ParisaArbab
+- LinkedIn: https://www.linkedin.com/in/parisa-arbab
